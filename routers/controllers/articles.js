@@ -65,7 +65,17 @@ const createNewArticle = async (req, res) => {
   res.json(dat);
 };
 
-const updateAnArticleById = async (req, res) => {};
+const updateAnArticleById = async (req, res) => {
+  const id = req.params.id;
+  const { description, title } = req.body;
+
+  await connection
+    .promise()
+    .query(`update articles SET title=? , description=? where id = ?`, [title, description, id]);
+
+  const updated = await connection.promise().query(`select * from articles where id=?`, [id]);
+  res.json(updated[0]);
+};
 
 const deleteArticleById = (req, res) => {
   const id = req.params.id;
