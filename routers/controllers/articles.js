@@ -77,20 +77,12 @@ const updateAnArticleById = async (req, res) => {
   res.json(updated[0]);
 };
 
-const deleteArticleById = (req, res) => {
+const deleteArticleById = async (req, res) => {
   const id = req.params.id;
+  await connection.promise().query(`UPDATE articles SET is_deleted=? WHERE id=?`, [1, id]);
 
-  articlesModel
-    .findByIdAndDelete(id)
-    .then((result) => {
-      res.status(200).json({
-        success: true,
-        message: `Success Delete atricle with id => ${id}`,
-      });
-    })
-    .catch((err) => {
-      res.send(err);
-    });
+  const deleted = await connection.promise().query(`select *  from articles WHERE is_deleted=? And id=?`, [1, id]);
+  res.json(deleted[0]);
 };
 
 const deleteArticlesByAuthor = (req, res) => {
