@@ -85,20 +85,15 @@ const deleteArticleById = async (req, res) => {
   res.json(deleted[0]);
 };
 
-const deleteArticlesByAuthor = (req, res) => {
+const deleteArticlesByAuthor = async (req, res) => {
   const author = req.body.author;
 
-  articlesModel
-    .deleteMany({ author })
-    .then((result) => {
-      res.status(200).json({
-        success: true,
-        message: `Success Delete atricle with id => ${author}`,
-      });
-    })
-    .catch((err) => {
-      res.send(err);
-    });
+  const join = await connection
+    .promise()
+    .query(
+      `SELECT title,description,firstName,author_id from users INNER JOIN articles ON users.id = articles.author_id`
+    );
+  /// now use join to get first name then use first name to get id for author then delete author id deleted =1
 };
 
 module.exports = {
