@@ -39,21 +39,20 @@ const getArticlesByAuthor = async (req, res) => {
   );
 };
 
-const getAnArticleById = (req, res) => {
-  const _id = req.params.id;
+const getAnArticleById = async (req, res) => {
+  const id = req.params.id;
 
-  if (!_id) return res.status(404).json("not found");
-
-  articlesModel
-    .findOne({ _id })
-    .populate("author", "firstName -_id")
-    .exec()
-    .then((result) => {
-      res.status(200).json(result);
+  const joinArticles = await connection
+    .promise()
+    .query(
+      `SELECT articles.is_deleted, articles.id, firstName,title,description FROM articles LEFT JOIN users ON users.id = articles.author_id`
+    );
+  console.log("joinArticles", joinArticles[0]);
+  res.json(
+    joinArticles[0].filter((ele) => {
+      return ele.id == req.params.id;
     })
-    .catch((err) => {
-      res.send(err);
-    });
+  );
 };
 
 const createNewArticle = async (req, res) => {
