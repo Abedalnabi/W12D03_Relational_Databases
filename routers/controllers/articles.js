@@ -50,7 +50,7 @@ const getAnArticleById = async (req, res) => {
   console.log("joinArticles", joinArticles[0]);
   res.json(
     joinArticles[0].filter((ele) => {
-      return ele.id == req.params.id;
+      return ele.id == req.params.id && ele.is_deleted == 0;
     })
   );
 };
